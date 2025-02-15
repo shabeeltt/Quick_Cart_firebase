@@ -1,0 +1,122 @@
+/* General Styles */
+.auth-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-family: "Arial", sans-serif;
+  padding: 20px;
+}
+
+/* Auth Form Container */
+.auth-form-container {
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Toggle Buttons */
+.auth-toggle {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  background: #f1f1f1;
+  border-radius: 8px;
+  padding: 5px;
+}
+
+.auth-toggle button {
+  flex: 1;
+  padding: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  border-radius: 8px;
+}
+
+.auth-toggle button.active {
+  background-color: #007bff;
+  color: #fff;
+}
+
+/* Form Styling */
+.auth-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-form h2 {
+  margin-bottom: 15px;
+  color: #333;
+  font-size: 22px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: #555;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border 0.3s ease-in-out;
+}
+
+.form-group input:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+/* Buttons */
+.auth-btn {
+  background-color: #007bff;
+  color: #fff;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.auth-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Error Message */
+.error-message {
+  color: #d9534f;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

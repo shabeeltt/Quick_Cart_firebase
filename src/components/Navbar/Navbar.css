@@ -1,0 +1,108 @@
+/* Navbar container */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #f8f9fa; /* Light background color */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+/* Logo styling */
+.logo {
+  font-size: 28px; /* Slightly larger for emphasis */
+  font-weight: 800; /* Bold for strong branding */
+  font-family: "Nunito", sans-serif; /* Apply Nunito font */
+  color: #007bff; /* Blue for a modern look */
+  text-transform: uppercase; /* Makes the logo stand out */
+  letter-spacing: 1.5px; /* Adds spacing for a premium feel */
+  cursor: pointer;
+  transition: color 0.3s ease;
+  text-decoration: none;
+}
+
+.logo:hover {
+  color: #0056b3; /* Slightly darker blue on hover */
+}
+
+/* Navigation links container */
+.nav-links ul {
+  display: flex;
+  gap: 20px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Individual navigation link */
+.nav-links li {
+  font-size: 16px;
+  color: #555; /* Slightly lighter than logo */
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.nav-links li:hover {
+  color: #007bff; /* Highlight color on hover */
+}
+
+/* Active navigation link styling */
+.nav-link.active {
+  color: #007bff; /* Match brand color */
+  font-weight: 600; /* Slightly bold for emphasis */
+  position: relative;
+  text-decoration: none;
+  transition: color 0.3s ease-in-out;
+}
+
+/* Subtle underline effect */
+.nav-link.active::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -3px;
+  width: 50%;
+  height: 2px;
+  background-color: #007bff;
+  transform: translateX(-50%);
+  border-radius: 2px;
+  transition: width 0.3s ease-in-out;
+}
+
+/* Slightly enlarge underline on hover */
+
+/* Login button styling */
+.nav-btn {
+  padding: 8px 16px;
+  margin-right: 20px;
+  background-color: #007bff; /* Blue button color */
+  color: white !important;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  text-decoration: none;
+}
+
+.nav-btn:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+  .nav-links ul {
+    flex-direction: column;
+    gap: 10px;
+    display: none; /* Hide by default for small screens */
+  }
+
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .nav-links ul.show {
+    display: flex; /* Show when toggled */
+  }
+}
