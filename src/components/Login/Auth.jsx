@@ -6,7 +6,8 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
 } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc } from "firebase/firestore";
+import { signOut } from "firebase/auth";
 
 const Auth = ({ setUser }) => {
   const [toShow, setToShow] = useState("login");
@@ -52,17 +53,66 @@ const Auth = ({ setUser }) => {
       );
       const user = userCredential.user;
 
-      await setDoc(doc(db, "users", user.uid), {
-        email: user.email,
-        cart: [],
-      });
+      await setDoc(
+        doc(db, "users", user.uid),
+        {
+          email: user.email,
+          isBlocked: false,
+          role: "user",
+          cart: [],
+        },
+        { merge: true }
+      );
 
       setUser(user);
+      setFormData({
+        login: { email: "", password: "" },
+        register: { email: "", password: "", confirmPassword: "" },
+      });
       navigate("/", { replace: true });
     } catch (err) {
       setError(err.message);
     }
   };
+
+  // const handleLoginSubmit = async (e) => {
+  //   e.preventDefault();
+  //   const { email, password } = formData.login;
+
+  //   try {
+  //     setError("");
+  //     const userCredential = await signInWithEmailAndPassword(
+  //       auth,
+  //       email,
+  //       password
+  //     );
+  //     setUser(userCredential.user);
+
+  //     const userRef = doc(db, "users", userCredential.user.uid);
+  //     const userDoc = await getDoc(userRef);
+
+  //     if (userDoc.exists()) {
+  //       const userData = userDoc.data();
+
+  //       // If user is blocked, log them out and show an error message
+  //       if (userData.isBlocked) {
+  //         await signOut(auth);
+  //         setError("Your account is blocked by Admin.");
+  //       } else {
+  //         // Reset form data after successful login
+  //         setFormData({
+  //           login: { email: "", password: "" },
+  //           register: { email: "", password: "", confirmPassword: "" },
+  //         });
+  //         navigate("/", { replace: true });
+  //       }
+  //     } else {
+  //       setError("User data not found.");
+  //     }
+  //   } catch (err) {
+  //     setError(err.message);
+  //   }
+  // };
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
@@ -75,8 +125,39 @@ const Auth = ({ setUser }) => {
         email,
         password
       );
-      setUser(userCredential.user);
-      navigate("/", { replace: true });
+      const user = userCredential.user;
+
+      const userRef = doc(db, "users", user.uid);
+      const userDoc = await getDoc(userRef);
+
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+
+        // If user is blocked, log them out and show an error message
+        if (userData.isBlocked) {
+          await signOut(auth);
+          setError("Your account is blocked by Admin.");
+          return;
+        }
+
+        // Set the user state
+        setUser(user);
+
+        // Navigate based on role
+        if (userData.role === "admin") {
+          navigate("/admin", { replace: true }); // Redirect admin to admin dashboard
+        } else {
+          navigate("/", { replace: true }); // Redirect regular users to homepage
+        }
+
+        // Reset form data after successful login
+        setFormData({
+          login: { email: "", password: "" },
+          register: { email: "", password: "", confirmPassword: "" },
+        });
+      } else {
+        setError("User data not found.");
+      }
     } catch (err) {
       setError(err.message);
     }

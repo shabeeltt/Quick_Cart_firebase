@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  doc,
+  getDoc,
+  serverTimestamp,
+  updateDoc,
+} from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 import "./Cart.css";
 import Loader from "../Loader";
@@ -18,7 +25,7 @@ const Cart = ({ user }) => {
     Swal.fire({
       icon: "error",
       title: "Oops...",
-      text: "Please login frist cart!!",
+      text: "Please login first !!",
     });
   };
 
@@ -80,14 +87,16 @@ const Cart = ({ user }) => {
     }
   };
 
-  // Handle quantity change
+  // changing the quantity of products
   const updateItemCount = (productId, change) => {
     const updatedCart = cartItems.map((item) =>
       item.id === productId
         ? { ...item, count: Math.max(1, (item.count || 1) + change) }
         : item
     );
+    //change in ui
     setCartItems(updatedCart);
+    //change in firestore
     updateCartInFirestore(updatedCart);
   };
 
@@ -130,6 +139,15 @@ const Cart = ({ user }) => {
     }).then(async (result) => {
       if (result.isConfirmed && user) {
         try {
+          //add the order to the firestore
+          const userOrderRef = collection(db, "users", user.uid, "orders");
+          await addDoc(userOrderRef, {
+            items: cartItems,
+            total: total,
+            time: serverTimestamp(),
+            status: "pending",
+          });
+
           const userCartRef = doc(db, "users", user.uid);
           await updateDoc(userCartRef, { cart: [] }); // remove cart of user from firestore
           setCartItems([]); // clear the cart to show in ui

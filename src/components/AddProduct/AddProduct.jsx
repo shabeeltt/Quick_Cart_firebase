@@ -6,20 +6,22 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { auth } from "../../firebaseConfig";
 import { onAuthStateChanged } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
 
-const AddProduct = ({ user }) => {
+const AddProduct = () => {
   const [productName, setProductName] = useState("");
   const [productPrice, setProductPrice] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
   const navigate = useNavigate();
 
   const showAlert = () => {
     Swal.fire({
       icon: "error",
       title: "Oops...",
-      text: "Please login frist to add product !!",
-    });
+      text: "You must be an admin to add a product!",
+    }).then(() => navigate("/", { replace: true }));
   };
 
   const showMessage = () => {
@@ -31,19 +33,32 @@ const AddProduct = ({ user }) => {
   };
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (!currentUser) {
         showAlert();
         navigate("/auth");
+        return;
+      }
+
+      const userRef = doc(db, "users", currentUser.uid);
+      const userDoc = await getDoc(userRef);
+
+      if (userDoc.exists() && userDoc.data().role === "admin") {
+        setIsAdmin(true); // User is admin
+      } else {
+        setIsAdmin(false); // User is not admin
+        showAlert();
       }
     });
 
     return () => unsubscribe(); // Cleanup listener on unmount
-  }, []);
+  }, [navigate]);
 
   // Function to add the product details to Firestore
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+
+    if (!isAdmin) return; // Prevent submitting if not admin
 
     try {
       // Add product details to Firestore collection
@@ -52,8 +67,6 @@ const AddProduct = ({ user }) => {
         name: productName,
         price: productPrice,
       });
-
-      console.log("Product added with ID:", productRef.id);
 
       // Clear form fields after submission
       setProductName("");

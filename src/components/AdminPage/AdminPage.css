@@ -1,0 +1,152 @@
+.user-card {
+  border: 1px solid #ddd;
+  margin: 20px;
+  padding: 20px;
+  border-radius: 10px;
+  background-color: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Slightly deeper shadow for a more elevated look */
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease; /* Added shadow transition */
+  width: 800px; /* Set width to ensure consistent card size */
+  min-height: 250px; /* Ensure the cards have consistent height */
+}
+
+.user-card:hover {
+  transform: translateY(-8px); /* Slightly stronger hover lift effect */
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2); /* Enhance the shadow on hover */
+}
+
+.user-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px; /* Added spacing below user info */
+}
+
+.user-email {
+  font-weight: bold;
+  color: #333;
+  font-size: 16px; /* Adjusted for readability */
+  margin-right: 10px;
+  text-overflow: ellipsis; /* Handle long email text gracefully */
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.user-status {
+  display: flex;
+  font-size: 14px;
+  color: #333;
+  align-items: center;
+}
+
+.user-status span {
+  font-weight: bold;
+}
+
+.user-action-btn {
+  padding: 10px 20px; /* Increased padding for a more substantial button */
+  border: none;
+  background-color: #3498db;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s, transform 0.3s; /* Added transition for transform */
+  font-size: 14px;
+  width: 100px; /* Ensure button is consistently sized */
+  text-align: center;
+}
+
+.user-action-btn:hover {
+  background-color: #2980b9;
+  transform: scale(1.05); /* Slightly scaled for a better hover effect */
+}
+
+.user-action-btn:focus {
+  outline: none;
+}
+
+.user-cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px; /* Spaced out the cards more */
+  justify-content: center;
+  padding: 20px;
+}
+
+.user-orders {
+  margin-top: 15px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.toggle-orders-btn {
+  background-color: #16a085;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s;
+}
+
+.toggle-orders-btn:hover {
+  background-color: #1abc9c;
+}
+
+.order-list {
+  margin-top: 10px;
+}
+
+.order-card {
+  background-color: #fff;
+  padding: 15px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.order-summary {
+  margin-bottom: 15px;
+}
+
+.order-summary h2 {
+  font-size: 18px;
+  color: #333;
+}
+
+.order-status,
+.order-price {
+  font-size: 14px;
+  color: #666;
+}
+
+.order-details h3 {
+  font-size: 16px;
+  color: #333;
+}
+
+.order-details ul {
+  padding-left: 20px;
+  margin-bottom: 10px;
+}
+
+.order-details li {
+  margin-bottom: 8px;
+}
+
+.order-price {
+  font-weight: bold;
+  color: #27ae60;
+  font-size: 16px;
+}
+
+.order-price {
+  margin-top: 5px;
+  font-size: 14px;
+}

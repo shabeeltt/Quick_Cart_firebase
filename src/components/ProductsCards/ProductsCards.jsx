@@ -16,6 +16,7 @@ const ProductsCards = ({ user }) => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [cartItems, setCartItems] = useState([]); // Store user's cart items
+  const [userRole, setUserRole] = useState(null); // To store user role (admin or user)
   const navigate = useNavigate();
 
   const showAlert = () => {
@@ -53,7 +54,7 @@ const ProductsCards = ({ user }) => {
     fetchProducts();
   }, []);
 
-  // fetch the cart from Firestore of the particular user to check if product is already in the cart or not.
+  // Fetch the cart from Firestore of the particular user to check if product is already in the cart or not.
   useEffect(() => {
     if (user) {
       const fetchCart = async () => {
@@ -61,6 +62,13 @@ const ProductsCards = ({ user }) => {
         const userCartSnap = await getDoc(userCartRef);
         if (userCartSnap.exists()) {
           setCartItems(userCartSnap.data().cart || []);
+        }
+
+        // Fetch user role from Firestore
+        const userDocRef = doc(db, "users", user.uid);
+        const userDocSnap = await getDoc(userDocRef);
+        if (userDocSnap.exists()) {
+          setUserRole(userDocSnap.data().role); // Set the role (admin or user)
         }
       };
       fetchCart();
@@ -82,6 +90,16 @@ const ProductsCards = ({ user }) => {
         title: "Already in Cart!",
         text: `${product.name} is already in your cart.`,
         icon: "info",
+      });
+      return;
+    }
+
+    // Check if user is admin from Firestore
+    if (userRole === "admin") {
+      Swal.fire({
+        title: "Action Not Allowed",
+        text: "Admin cannot add products to the cart.",
+        icon: "error",
       });
       return;
     }
@@ -161,12 +179,14 @@ const ProductsCards = ({ user }) => {
                   />
                 )}
                 {isInCart && <div className="added-to-cart">✅</div>}
-                <button
-                  className="addtocart"
-                  onClick={(e) => addToCart(product, e)}
-                >
-                  Add to Cart
-                </button>
+                {userRole !== "admin" && (
+                  <button
+                    className="addtocart"
+                    onClick={(e) => addToCart(product, e)}
+                  >
+                    Add to Cart
+                  </button>
+                )}
               </div>
             );
           })}

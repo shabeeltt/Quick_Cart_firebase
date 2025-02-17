@@ -1,27 +1,3 @@
-// import "./App.css";
-// import Navbar from "./components/Navbar/Navbar";
-// import { Routes, Route } from "react-router-dom";
-// import Products from "./components/Products/Products";
-// import Auth from "./components/Login/Auth";
-// import { useState } from "react";
-// import AddProduct from "./components/AddProduct/AddProduct";
-
-// function App() {
-//   const [user, setUser] = useState("");
-
-//   return (
-//     <>
-//       <Navbar />
-//       <Routes user={user} setUser={setUser}>
-//         <Route path="/" exact element={<Products />} />
-//         <Route path="/add-product" exact element={<AddProduct />} />
-//         <Route path="/auth" exact element={<Auth setUser={setUser} />} />
-//       </Routes>
-//     </>
-//   );
-// }
-
-// export default App;
 import "./App.css";
 import Navbar from "./components/Navbar/Navbar";
 import { Routes, Route } from "react-router-dom";
@@ -31,6 +7,9 @@ import { useState, useEffect } from "react";
 import AddProduct from "./components/AddProduct/AddProduct";
 import { auth } from "./firebaseConfig";
 import Cart from "./components/Cart/Cart";
+import Orders from "./components/Orders/Orders";
+import AdminPage from "./components/AdminPage/AdminPage";
+import AdminRoute from "./components/AdminRoute";
 
 function App() {
   const [user, setUser] = useState(null);
@@ -51,6 +30,17 @@ function App() {
         <Route path="/add-product" element={<AddProduct user={user} />} />
         <Route path="/auth" element={<Auth setUser={setUser} />} />
         <Route path="/cart" element={<Cart user={user} />} />
+        <Route path="/order" element={<Orders />} />
+        {/* <Route path="/admin/user/:id" element={<UserOrders />} /> */}
+        {/* <Route path="/admin" element={<AdminPage />} /> */}
+        <Route
+          path="/admin"
+          element={
+            <AdminRoute>
+              <AdminPage />
+            </AdminRoute>
+          }
+        />
       </Routes>
     </>
   );
