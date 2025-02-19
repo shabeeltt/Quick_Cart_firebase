@@ -6,11 +6,13 @@ import {
   doc,
   updateDoc,
   getDoc,
+  deleteDoc,
 } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 import "./ProductsCards.css";
 import Loader from "../Loader";
 import Swal from "sweetalert2";
+import EditPopup from "../EditPopup/EditPopup";
 
 const ProductsCards = ({ user }) => {
   const [products, setProducts] = useState([]);
@@ -18,6 +20,8 @@ const ProductsCards = ({ user }) => {
   const [cartItems, setCartItems] = useState([]); // Store user's cart items
   const [userRole, setUserRole] = useState(null); // To store user role (admin or user)
   const navigate = useNavigate();
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingProduct, setEditingProduct] = useState(null);
 
   const showAlert = () => {
     Swal.fire({
@@ -35,22 +39,21 @@ const ProductsCards = ({ user }) => {
   };
 
   // Fetch products from Firestore
+  const fetchProducts = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, "products"));
+      const productList = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setProducts(productList);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, "products"));
-        const productList = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setProducts(productList);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchProducts();
   }, []);
 
@@ -148,6 +151,62 @@ const ProductsCards = ({ user }) => {
     });
   };
 
+  const editProduct = (product, e) => {
+    e.stopPropagation();
+    if (userRole !== "admin") {
+      Swal.fire({
+        title: "Action Not Allowed",
+        text: "Only admin can edit the product.",
+        icon: "error",
+      });
+      return;
+    }
+
+    setIsEditing(true);
+    setEditingProduct(product);
+  };
+
+  const deleteProduct = async (product, e) => {
+    e.stopPropagation();
+
+    if (userRole !== "admin") {
+      Swal.fire({
+        title: "Action Not Allowed",
+        text: "Only admin can edit the product.",
+        icon: "error",
+      });
+      return;
+    }
+
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to remove this product?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes",
+      cancelButtonText: "No",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const productRef = doc(db, "products", product.id);
+          await deleteDoc(productRef);
+          Swal.fire(
+            "Deleted!",
+            "The product has been removed.",
+            "success"
+          ).then(() => fetchProducts());
+        } catch (error) {
+          console.error("Error while deleting the product:", error);
+          Swal.fire(
+            "Error!",
+            "Failed to delete the product. Please try again.",
+            "error"
+          );
+        }
+      }
+    });
+  };
+
   return loading ? (
     <div className="loading-screen">
       <Loader />
@@ -155,6 +214,9 @@ const ProductsCards = ({ user }) => {
     </div>
   ) : (
     <div className="cards-container">
+      {isEditing && (
+        <EditPopup product={editingProduct} setIsEditing={setIsEditing} />
+      )}
       {products.length > 0 ? (
         <div className="product-list">
           {products.map((product) => {
@@ -179,20 +241,35 @@ const ProductsCards = ({ user }) => {
                   />
                 )}
                 {isInCart && <div className="added-to-cart">✅</div>}
-                {userRole !== "admin" && (
+                {userRole !== "admin" ? (
                   <button
                     className="addtocart"
                     onClick={(e) => addToCart(product, e)}
                   >
                     Add to Cart
                   </button>
+                ) : (
+                  <div>
+                    <button
+                      className="editProduct"
+                      onClick={(e) => editProduct(product, e)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="deleteProduct"
+                      onClick={(e) => deleteProduct(product, e)}
+                    >
+                      Delete
+                    </button>
+                  </div>
                 )}
               </div>
             );
           })}
         </div>
       ) : (
-        <p>No products available</p>
+        <p>No products availabe</p>
       )}
     </div>
   );

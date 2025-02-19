@@ -75,6 +75,7 @@
 }
 
 .product-list {
+  margin-top: 100px;
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
@@ -166,6 +167,16 @@
   border-radius: 8px !important;
   padding: 8px 16px !important;
   transition: 0.3s;
+}
+
+.deleteProduct {
+  background-color: rgb(249, 57, 57);
+  margin-top: 10px;
+  transition: all 0.3s ease-out;
+}
+
+.deleteProduct:hover {
+  background-color: red;
 }
 
 .custom-popup .swal2-confirm:hover {

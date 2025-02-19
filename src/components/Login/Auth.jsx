@@ -75,45 +75,6 @@ const Auth = ({ setUser }) => {
     }
   };
 
-  // const handleLoginSubmit = async (e) => {
-  //   e.preventDefault();
-  //   const { email, password } = formData.login;
-
-  //   try {
-  //     setError("");
-  //     const userCredential = await signInWithEmailAndPassword(
-  //       auth,
-  //       email,
-  //       password
-  //     );
-  //     setUser(userCredential.user);
-
-  //     const userRef = doc(db, "users", userCredential.user.uid);
-  //     const userDoc = await getDoc(userRef);
-
-  //     if (userDoc.exists()) {
-  //       const userData = userDoc.data();
-
-  //       // If user is blocked, log them out and show an error message
-  //       if (userData.isBlocked) {
-  //         await signOut(auth);
-  //         setError("Your account is blocked by Admin.");
-  //       } else {
-  //         // Reset form data after successful login
-  //         setFormData({
-  //           login: { email: "", password: "" },
-  //           register: { email: "", password: "", confirmPassword: "" },
-  //         });
-  //         navigate("/", { replace: true });
-  //       }
-  //     } else {
-  //       setError("User data not found.");
-  //     }
-  //   } catch (err) {
-  //     setError(err.message);
-  //   }
-  // };
-
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     const { email, password } = formData.login;
@@ -186,7 +147,7 @@ const Auth = ({ setUser }) => {
             <h2>Login</h2>
             {error && <p className="error-message">{error}</p>}
             <form onSubmit={handleLoginSubmit}>
-              <div className="form-group">
+              <div className="form-group" style={{ margin: "0" }}>
                 <label>Email</label>
                 <input
                   type="email"

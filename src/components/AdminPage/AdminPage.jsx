@@ -5,7 +5,6 @@ import "./AdminPage.css";
 
 const AdminPage = () => {
   const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [expandedUserId, setExpandedUserId] = useState(null); // Track expanded user
   const [userOrders, setUserOrders] = useState({}); // Store orders for each user
 
@@ -20,10 +19,8 @@ const AdminPage = () => {
           ...doc.data(),
         }));
         setUsers(usersList);
-        setLoading(false);
       } catch (error) {
         console.error("Error fetching users: ", error);
-        setLoading(false);
       }
     };
 
@@ -83,28 +80,28 @@ const AdminPage = () => {
   return (
     <>
       <h1>Users</h1>
-      {loading ? (
-        <p>Loading...</p>
-      ) : (
-        <div className="user-cards-container">
-          {users.map((user) => (
-            <div key={user.id} className="user-card">
-              <div className="user-info">
-                <p className="user-email">
-                  {user.email} {user.role === "admin" && "(Admin)"}
-                </p>
 
+      <div className="user-cards-container">
+        {users.map((user) => (
+          <div key={user.id} className="user-card">
+            <div className="user-info">
+              <p className="user-email">
+                {user.email} {user.role === "admin" && "(Admin)"}
+              </p>
+
+              <div className="user-status-wrapper">
                 {/* Blocked/Active status */}
                 <p className="user-status">
                   Status:{" "}
-                  <p
+                  <span
                     style={{
                       color: user.isBlocked ? "#e74c3c" : "#27ae60",
                       fontWeight: "bold",
+                      margin: "0 0 0 10px",
                     }}
                   >
                     {user.isBlocked ? "Blocked" : "Active"}
-                  </p>
+                  </span>
                 </p>
 
                 {/* Action buttons to Block or Unblock */}
@@ -115,24 +112,24 @@ const AdminPage = () => {
                   {user.isBlocked ? "Unblock" : "Block"}
                 </button>
               </div>
-
-              {/* Orders Section (toggle visibility) */}
-              <div className="user-orders">
-                <button
-                  onClick={() => handleToggleOrders(user.id)}
-                  className="toggle-orders-btn"
-                >
-                  {expandedUserId === user.id ? "Hide Orders" : "Show Orders"}
-                </button>
-
-                {expandedUserId === user.id && (
-                  <OrdersList orders={userOrders[user.id] || []} />
-                )}
-              </div>
             </div>
-          ))}
-        </div>
-      )}
+
+            {/* Orders Section (toggle visibility) */}
+            <div className="user-orders">
+              <button
+                onClick={() => handleToggleOrders(user.id)}
+                className="toggle-orders-btn"
+              >
+                {expandedUserId === user.id ? "Hide Orders" : "Show Orders"}
+              </button>
+
+              {expandedUserId === user.id && (
+                <OrdersList orders={userOrders[user.id] || []} />
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
     </>
   );
 };

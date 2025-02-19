@@ -4,15 +4,14 @@
   padding: 20px;
   border-radius: 10px;
   background-color: #fff;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Slightly deeper shadow for a more elevated look */
-  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease; /* Added shadow transition */
-  width: 800px; /* Set width to ensure consistent card size */
-  min-height: 250px; /* Ensure the cards have consistent height */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease;
+  width: 800px;
+  min-height: 190px;
 }
-
-.user-card:hover {
-  transform: translateY(-8px); /* Slightly stronger hover lift effect */
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2); /* Enhance the shadow on hover */
+.user-status-wrapper {
+  display: flex;
+  gap: 50px;
 }
 
 .user-info {
@@ -69,7 +68,6 @@
 .user-cards-container {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px; /* Spaced out the cards more */
   justify-content: center;
   padding: 20px;
 }
