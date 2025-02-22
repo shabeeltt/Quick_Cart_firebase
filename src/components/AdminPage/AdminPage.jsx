@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { db } from "../../firebaseConfig"; // Firebase configuration file
+import { db } from "../../firebaseConfig"; // Firebase config
 import { collection, getDocs, doc, updateDoc } from "firebase/firestore"; // Firestore methods
 import "./AdminPage.css";
 
 const AdminPage = () => {
   const [users, setUsers] = useState([]);
-  const [expandedUserId, setExpandedUserId] = useState(null); // Track expanded user
-  const [userOrders, setUserOrders] = useState({}); // Store orders for each user
+  const [expandedUserId, setExpandedUserId] = useState(null);
+  const [userOrders, setUserOrders] = useState({});
 
-  // Fetch users data from Firestore
+  // Fetch users from Firestore
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -27,7 +27,7 @@ const AdminPage = () => {
     fetchUsers();
   }, []);
 
-  // Fetch orders for a user when expanded
+  // Fetch orders for a specific user
   const fetchOrders = async (userId) => {
     try {
       const ordersCollection = collection(db, "users", userId, "orders");
@@ -38,39 +38,37 @@ const AdminPage = () => {
       }));
       setUserOrders((prevOrders) => ({
         ...prevOrders,
-        [userId]: ordersList, // Save orders for the specific user
+        [userId]: ordersList,
       }));
     } catch (error) {
       console.error("Error fetching orders: ", error);
     }
   };
 
-  // Toggle the user's isBlocked status
-  const toggleBlockStatus = async (userId, currentStatus) => {
+  // Handle order status update
+  const handleStatusChange = async (userId, orderId, newStatus) => {
     try {
-      const userRef = doc(db, "users", userId);
-      await updateDoc(userRef, {
-        isBlocked: !currentStatus, // Toggle the current status
-      });
-      setUsers((prevUsers) =>
-        prevUsers.map((user) =>
-          user.id === userId ? { ...user, isBlocked: !currentStatus } : user
-        )
-      );
+      const orderRef = doc(db, "users", userId, "orders", orderId);
+      await updateDoc(orderRef, { status: newStatus });
+
+      // Update UI after Firestore update
+      setUserOrders((prevOrders) => ({
+        ...prevOrders,
+        [userId]: prevOrders[userId].map((order) =>
+          order.id === orderId ? { ...order, status: newStatus } : order
+        ),
+      }));
     } catch (error) {
-      console.error("Error updating user status: ", error);
+      console.error("Error updating order status: ", error);
     }
   };
 
-  // Handle toggle of orders visibility
+  // Toggle user orders section
   const handleToggleOrders = (userId) => {
     if (expandedUserId === userId) {
-      // If the same user is clicked, collapse the orders section
       setExpandedUserId(null);
     } else {
-      // Expand the orders section for the clicked user
       setExpandedUserId(userId);
-      // Fetch the orders only if they haven't been fetched yet
       if (!userOrders[userId]) {
         fetchOrders(userId);
       }
@@ -80,7 +78,6 @@ const AdminPage = () => {
   return (
     <>
       <h1>Users</h1>
-
       <div className="user-cards-container">
         {users.map((user) => (
           <div key={user.id} className="user-card">
@@ -88,33 +85,9 @@ const AdminPage = () => {
               <p className="user-email">
                 {user.email} {user.role === "admin" && "(Admin)"}
               </p>
-
-              <div className="user-status-wrapper">
-                {/* Blocked/Active status */}
-                <p className="user-status">
-                  Status:{" "}
-                  <span
-                    style={{
-                      color: user.isBlocked ? "#e74c3c" : "#27ae60",
-                      fontWeight: "bold",
-                      margin: "0 0 0 10px",
-                    }}
-                  >
-                    {user.isBlocked ? "Blocked" : "Active"}
-                  </span>
-                </p>
-
-                {/* Action buttons to Block or Unblock */}
-                <button
-                  className="user-action-btn"
-                  onClick={() => toggleBlockStatus(user.id, user.isBlocked)}
-                >
-                  {user.isBlocked ? "Unblock" : "Block"}
-                </button>
-              </div>
             </div>
 
-            {/* Orders Section (toggle visibility) */}
+            {/* Toggle Orders Button */}
             <div className="user-orders">
               <button
                 onClick={() => handleToggleOrders(user.id)}
@@ -123,8 +96,13 @@ const AdminPage = () => {
                 {expandedUserId === user.id ? "Hide Orders" : "Show Orders"}
               </button>
 
+              {/* Orders Section */}
               {expandedUserId === user.id && (
-                <OrdersList orders={userOrders[user.id] || []} />
+                <OrdersList
+                  orders={userOrders[user.id] || []}
+                  userId={user.id}
+                  onStatusChange={handleStatusChange}
+                />
               )}
             </div>
           </div>
@@ -134,31 +112,36 @@ const AdminPage = () => {
   );
 };
 
-const OrdersList = ({ orders }) => {
+// Orders List Component
+const OrdersList = ({ orders, userId, onStatusChange }) => {
   return (
     <div className="order-list">
       {orders.length > 0 ? (
         orders.map((order, index) => (
           <div key={order.id} className="order-card">
             <div className="order-summary">
-              <h2>Order No: {index + 1}</h2>
+              <div className="top-section">
+                <h2>Order No: {index + 1}</h2>
+
+                {/* Order Status Dropdown */}
+                <select
+                  name="status"
+                  id="status"
+                  className={`order-status-dropdown ${order.status}`}
+                  value={order.status}
+                  onChange={(e) =>
+                    onStatusChange(userId, order.id, e.target.value)
+                  }
+                >
+                  <option value="pending">Pending</option>
+                  <option value="cancelled">Cancelled</option>
+                  <option value="delivered">Delivered</option>
+                </select>
+              </div>
+
               <p className="order-status">Status: {order.status}</p>
               <p>Order Date: {order.time.toDate().toLocaleDateString()}</p>
               <p className="order-price">{order.total} Rs</p>
-            </div>
-            <div className="order-details">
-              <h3>Items:</h3>
-              <ul>
-                {order.items.map((item) => (
-                  <li key={item.id}>
-                    <p>Name: {item.name}</p>
-                    <p>Price: {item.price} Rs</p>
-                    <p>Quantity: {item.count}</p>
-                    <p>Total: {item.price * item.count} Rs</p>
-                  </li>
-                ))}
-              </ul>
-              <h3 className="order-price">Amount: {order.total} Rs</h3>
             </div>
           </div>
         ))

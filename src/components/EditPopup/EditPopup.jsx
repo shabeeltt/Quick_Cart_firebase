@@ -3,7 +3,7 @@ import "./EditPopup.css";
 import { doc, updateDoc } from "firebase/firestore";
 import { db } from "../../firebaseConfig";
 
-const EditPopup = ({ setIsEditing, product }) => {
+const EditPopup = ({ setIsEditing, product, setProducts }) => {
   const [editedName, setEditedName] = useState(product.name);
   const [editedPrice, setEditedPrice] = useState(product.price);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -14,6 +14,19 @@ const EditPopup = ({ setIsEditing, product }) => {
     document.documentElement.style.overflow = "auto";
 
     setIsEditing(false);
+  };
+
+  const fetchProducts = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(db, "products"));
+      const productList = querySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setProducts(productList);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    }
   };
 
   document.body.style.overflow = "hidden";
@@ -38,6 +51,7 @@ const EditPopup = ({ setIsEditing, product }) => {
         }
 
         closePopup(); // Close the popup after successful submit
+        fetchProducts();
       } else {
         setError("Both fields are required");
       }

@@ -37,8 +37,9 @@ const Navbar = () => {
     try {
       const confirmLogout = confirm("Are you sure you want to Logout?");
       if (!confirmLogout) return;
-      navigate("/auth", { replace: true });
       await signOut(auth);
+      navigate("/auth");
+      window.location.reload();
     } catch (error) {
       console.error("Error logging out:", error.message);
     }

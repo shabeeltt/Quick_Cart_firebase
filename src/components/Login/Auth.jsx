@@ -4,6 +4,7 @@ import { auth, db } from "../../firebaseConfig";
 import { useNavigate } from "react-router-dom";
 import {
   createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
@@ -124,6 +125,21 @@ const Auth = ({ setUser }) => {
     }
   };
 
+  //resetting the password of the user using firebase sendPasswordResetEmail function
+  const handleResetPassword = async (email) => {
+    if (!email) {
+      alert("please enter the email first");
+      return;
+    }
+    try {
+      await sendPasswordResetEmail(auth, email);
+    } catch (error) {
+      setError(error);
+    }
+
+    alert("Password reset email sent! Check your inbox.");
+  };
+
   return (
     <div className="auth-container">
       <div className="auth-form-container">
@@ -166,6 +182,12 @@ const Auth = ({ setUser }) => {
                   onChange={(e) => handleChange(e, "login")}
                   required
                 />
+                <p
+                  onClick={() => handleResetPassword(formData.login.email)}
+                  style={{ textAlign: "right", cursor: "pointer" }}
+                >
+                  Forgot Password
+                </p>
               </div>
               <button type="submit" className="auth-btn">
                 Login
@@ -179,7 +201,7 @@ const Auth = ({ setUser }) => {
             <h2>Register</h2>
             {error && <p className="error-message">{error}</p>}
             <form onSubmit={handleRegisterSubmit}>
-              <div className="form-group">
+              <div className="form-group" style={{ margin: "0" }}>
                 <label>Email</label>
                 <input
                   type="email"

@@ -215,7 +215,11 @@ const ProductsCards = ({ user }) => {
   ) : (
     <div className="cards-container">
       {isEditing && (
-        <EditPopup product={editingProduct} setIsEditing={setIsEditing} />
+        <EditPopup
+          product={editingProduct}
+          setIsEditing={setIsEditing}
+          setProducts={setProducts}
+        />
       )}
       {products.length > 0 ? (
         <div className="product-list">

@@ -101,11 +101,6 @@
     display: none; /* Hide by default for small screens */
   }
 
-  .navbar {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
   .nav-links ul.show {
     display: flex; /* Show when toggled */
   }
