@@ -18,3 +18,29 @@ QuickCart is a React-based shopping cart application that allows users to browse
 - **Firebase**: Used for authentication (Firebase Auth) and storing cart data (Firestore).
 - **SweetAlert2**: For showing custom alerts.
 - **CSS**: Custom styling for the application.
+
+## Installation
+
+To run this project locally, follow these steps:
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/your-username/Quick_Cart_firebase.git
+   
+2. **Navigate into the project directory:**
+   ```bash
+   cd Quick_Cart_firebase
+   
+3. **Install the required dependencies:**
+   ```bash
+   npm install
+
+4. **Set up Firebase:**
+   - Create a Firebase project and enable Firestore and Firebase Authentication.
+   - Replace the Firebase config in src/firebase.js with your Firebase project credentials.
+     
+5. **Run the app locally:**
+   ```bash
+   npm start
+
+  
